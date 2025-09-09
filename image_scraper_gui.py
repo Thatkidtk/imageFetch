@@ -9,6 +9,7 @@ from tkinter import ttk, filedialog, messagebox
 import subprocess
 import platform
 import os
+import json
 
 from image_scraper import (
     crawl_site,
@@ -34,9 +35,11 @@ class ImageScraperGUI:
         self.completed = 0
         self.out_dir_path: Path | None = None
         self.zip_path: Path | None = None
-        self.open_when_done_var = tk.BooleanVar(value=True)
+        # Default: off; can be overridden by saved prefs
+        self.open_when_done_var = tk.BooleanVar(value=False)
 
         self._build_ui()
+        self._load_prefs()
 
     def _build_ui(self):
         pad = {"padx": 10, "pady": 6}
@@ -66,6 +69,7 @@ class ImageScraperGUI:
             frm,
             text="Open folder when done",
             variable=self.open_when_done_var,
+            command=self._on_open_when_done_toggle,
         ).grid(row=3, column=0, columnspan=3, sticky="w", **pad)
 
         # Progress
@@ -108,6 +112,7 @@ class ImageScraperGUI:
         d = filedialog.askdirectory()
         if d:
             self.out_dir_var.set(d)
+            self._save_prefs()
 
     def _toggle_crawl(self):
         state = tk.NORMAL if self.crawl_var.get() else tk.DISABLED
@@ -157,6 +162,8 @@ class ImageScraperGUI:
         self.progress['value'] = 0
 
         self.out_dir_path = Path(out_dir_str)
+        # Persist chosen folder and preference before starting
+        self._save_prefs()
 
         threading.Thread(target=self._run_scrape, args=(url, max_pages), daemon=True).start()
 
@@ -237,10 +244,58 @@ class ImageScraperGUI:
         if self.zip_path and self.zip_path.exists():
             self._open_path(self.zip_path)
 
+    # Preferences persistence
+    def _config_dir(self) -> Path:
+        if platform.system() == "Windows":
+            base = Path(os.environ.get("APPDATA", Path.home()))
+            return base / "imageFetch"
+        else:
+            return Path.home() / ".config" / "imageFetch"
+
+    def _config_file(self) -> Path:
+        return self._config_dir() / "config.json"
+
+    def _load_prefs(self):
+        try:
+            cfg_path = self._config_file()
+            if cfg_path.exists():
+                data = json.load(open(cfg_path, "r", encoding="utf-8"))
+                if isinstance(data, dict):
+                    open_pref = data.get("open_when_done")
+                    if isinstance(open_pref, bool):
+                        self.open_when_done_var.set(open_pref)
+                    out_dir_pref = data.get("last_out_dir")
+                    if isinstance(out_dir_pref, str) and out_dir_pref:
+                        self.out_dir_var.set(out_dir_pref)
+        except Exception:
+            pass
+
+    def _save_prefs(self):
+        try:
+            cfg_dir = self._config_dir()
+            cfg_dir.mkdir(parents=True, exist_ok=True)
+            cfg_path = self._config_file()
+            data = {
+                "open_when_done": bool(self.open_when_done_var.get()),
+                "last_out_dir": self.out_dir_var.get().strip(),
+            }
+            with open(cfg_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+        except Exception:
+            pass
+
+    def _on_open_when_done_toggle(self):
+        self._save_prefs()
+
+    def _on_close(self):
+        self._save_prefs()
+        self.root.destroy()
+
 
 def run():
     root = tk.Tk()
     app = ImageScraperGUI(root)
+    root.protocol("WM_DELETE_WINDOW", app._on_close)
     root.mainloop()
 
 
