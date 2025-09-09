@@ -42,6 +42,7 @@ python image_scraper_gui.py
 - Output Folder: pick a folder (or leave blank to auto-create).
 - Crawl same-site links: enable and set Max pages to traverse.
 - Click Start to begin; a progress bar tracks downloads.
+ - Option: "Open folder when done" will open the output folder automatically when the job completes (Windows/macOS/Linux).
 
 When finished, the GUI enables buttons to open the output folder and the ZIP archive.
 

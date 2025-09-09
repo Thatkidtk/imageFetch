@@ -34,6 +34,7 @@ class ImageScraperGUI:
         self.completed = 0
         self.out_dir_path: Path | None = None
         self.zip_path: Path | None = None
+        self.open_when_done_var = tk.BooleanVar(value=True)
 
         self._build_ui()
 
@@ -60,22 +61,29 @@ class ImageScraperGUI:
         self.max_pages_entry = ttk.Entry(frm, textvariable=self.max_pages_var, width=8)
         self.max_pages_entry.grid(row=2, column=2, sticky="w", **pad)
 
+        # Open when done
+        ttk.Checkbutton(
+            frm,
+            text="Open folder when done",
+            variable=self.open_when_done_var,
+        ).grid(row=3, column=0, columnspan=3, sticky="w", **pad)
+
         # Progress
         self.progress = ttk.Progressbar(frm, mode="determinate")
-        self.progress.grid(row=3, column=0, columnspan=3, sticky="we", **pad)
+        self.progress.grid(row=4, column=0, columnspan=3, sticky="we", **pad)
         self.progress_label = ttk.Label(frm, text="Idle")
-        self.progress_label.grid(row=4, column=0, columnspan=3, sticky="w", **pad)
+        self.progress_label.grid(row=5, column=0, columnspan=3, sticky="w", **pad)
 
         # Log
-        ttk.Label(frm, text="Log").grid(row=5, column=0, sticky="w", **pad)
+        ttk.Label(frm, text="Log").grid(row=6, column=0, sticky="w", **pad)
         self.log = tk.Text(frm, height=12, wrap="word")
-        self.log.grid(row=6, column=0, columnspan=3, sticky="nsew", **pad)
-        frm.rowconfigure(6, weight=1)
+        self.log.grid(row=7, column=0, columnspan=3, sticky="nsew", **pad)
+        frm.rowconfigure(7, weight=1)
         frm.columnconfigure(1, weight=1)
 
         # Buttons
         btns = ttk.Frame(frm)
-        btns.grid(row=7, column=0, columnspan=3, sticky="e", **pad)
+        btns.grid(row=8, column=0, columnspan=3, sticky="e", **pad)
         self.start_btn = ttk.Button(btns, text="Start", command=self.start)
         self.start_btn.grid(row=0, column=0, padx=6)
         self.open_folder_btn = ttk.Button(btns, text="Open Folder", command=self.open_folder, state=tk.DISABLED)
@@ -210,6 +218,10 @@ class ImageScraperGUI:
             self._ui(lambda: self.open_folder_btn.configure(state=tk.NORMAL))
             self._ui(lambda: self.open_zip_btn.configure(state=tk.NORMAL))
             self._ui(lambda: messagebox.showinfo("Completed", f"Saved to:\n{self.out_dir_path}\n\nZIP:\n{zip_path}"))
+
+            # Auto-open output folder if requested
+            if self.open_when_done_var.get() and self.out_dir_path and self.out_dir_path.exists():
+                self._ui(lambda: self._open_path(self.out_dir_path))
         except Exception as e:
             self._ui(lambda: self.start_btn.configure(state=tk.NORMAL))
             self._ui(lambda: messagebox.showerror("Error", str(e)))
