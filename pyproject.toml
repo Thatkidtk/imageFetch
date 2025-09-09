@@ -21,4 +21,4 @@ imgFetch = "image_fetch_gui:run"
 imagefetch = "image_fetch_gui:run"
 
 [tool.setuptools]
-py-modules = ["image_scraper", "image_scraper_gui"]
+py-modules = ["image_scraper", "image_scraper_gui", "image_fetch_gui"]
