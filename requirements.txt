@@ -1,3 +1,4 @@
-requests
+﻿requests
 beautifulsoup4
-tqdm
+
+customtkinter

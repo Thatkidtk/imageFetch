@@ -11,12 +11,13 @@ requires-python = ">=3.10"
 dependencies = [
   "requests",
   "beautifulsoup4",
+  "customtkinter",
 ]
 
 [project.scripts]
-imageFetch = "image_scraper_gui:run"
-imgFetch = "image_scraper_gui:run"
-imagefetch = "image_scraper_gui:run"
+imageFetch = "image_fetch_gui:run"
+imgFetch = "image_fetch_gui:run"
+imagefetch = "image_fetch_gui:run"
 
 [tool.setuptools]
 py-modules = ["image_scraper", "image_scraper_gui"]

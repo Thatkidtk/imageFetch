@@ -32,10 +32,10 @@ After downloads complete, the CLI also creates a ZIP archive next to the output 
 
 ## GUI Usage
 
-Run the GUI and fill in the fields:
+Run the modern GUI (customtkinter) and fill in the fields:
 
 ```
-python image_scraper_gui.py
+imageFetch
 ```
 
 - URL: page to scrape.
@@ -132,4 +132,9 @@ If `imageFetch` is not found, ensure your Python Scripts directory is on PATH. O
 - Data URLs are listed in the manifest but not saved as files.
 - Crawling is limited to the same domain when enabled.
 - After completion, a ZIP archive is created for the output folder (both CLI and GUI).
+
+
+### Appearance
+- Theme: System / Light / Dark
+- Accent: blue / green / dark-blue
 
