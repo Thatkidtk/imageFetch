@@ -7,6 +7,8 @@ import re
 import sys
 import threading
 import time
+import platform
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Set, Tuple, Dict, List
@@ -16,6 +18,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, urldefrag
 import shutil
 from requests import exceptions as req_exc
+import argparse
 
 
 USER_AGENT = (
@@ -320,8 +323,33 @@ def zip_output_folder(out_dir: Path) -> Path:
     return Path(zip_path)
 
 
+def _open_path_cross_platform(path: Path) -> bool:
+    try:
+        if platform.system() == "Windows":
+            os.startfile(path)  # type: ignore[attr-defined]
+            return True
+        elif platform.system() == "Darwin":
+            opener = shutil.which("open")
+            if opener:
+                subprocess.run([opener, str(path)], check=False)
+                return True
+            return False
+        else:
+            opener = shutil.which("xdg-open")
+            if opener:
+                subprocess.run([opener, str(path)], check=False)
+                return True
+            return False
+    except Exception:
+        return False
+
+
 def main():
-    print("Image Scraper — Save all images from a page or site")
+    parser = argparse.ArgumentParser(description="Save all images from a page or site")
+    parser.add_argument("--open-output", "-O", action="store_true", help="Open the output folder when done")
+    args, _unknown = parser.parse_known_args()
+
+    print("Image Scraper - Save all images from a page or site")
     url = input("Enter a URL: ").strip()
     if not url:
         print("No URL provided. Exiting.")
@@ -401,6 +429,17 @@ def main():
         print(f"\nFailed to create ZIP: {e}")
 
     print("Done.")
+
+    if args.open_output:
+        # Warn if opener missing on non-Windows
+        if platform.system() == "Darwin" and not shutil.which("open"):
+            print(f"Note: 'open' command not found; cannot auto-open. Folder: {out_dir}")
+        elif platform.system() not in ("Windows", "Darwin") and not shutil.which("xdg-open"):
+            print(f"Note: 'xdg-open' not found; cannot auto-open. Folder: {out_dir}")
+        else:
+            ok = _open_path_cross_platform(out_dir)
+            if not ok:
+                print(f"Could not open folder automatically: {out_dir}")
 
 
 if __name__ == "__main__":

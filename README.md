@@ -1,6 +1,6 @@
-# Image Scraper
+﻿# Image Scraper
 
-Simple app (CLI + GUI) that asks for a URL, finds images on the page (and optionally on same‑site pages), saves them to a folder, and creates a ZIP archive for easy download.
+Simple app (CLI + GUI) that asks for a URL, finds images on the page (and optionally on sameâ€‘site pages), saves them to a folder, and creates a ZIP archive for easy download.
 
 ## Setup
 
@@ -47,7 +47,7 @@ When finished, the GUI enables buttons to open the output folder and the ZIP arc
 
 ## Install From GitHub (Recommended)
 
-Option A — pipx (isolated, recommended)
+Option A — pipx (isolated, recommended) (isolated, recommended)
 
 ```
 pipx install "git+https://github.com/Thatkidtk/imageFetch.git"
@@ -65,13 +65,13 @@ Install a specific version (tag):
 pipx install "git+https://github.com/Thatkidtk/imageFetch.git@v0.1.0"
 ```
 
-Option B — pip (user install)
+Option B — pip (user install) (user install)
 
 ```
 python -m pip install --user "git+https://github.com/Thatkidtk/imageFetch.git"
 ```
 
-If the `imageFetch` command isn’t found after installation, add your Python Scripts folder to PATH. On Windows this is typically:
+If the `imageFetch` command isnâ€™t found after installation, add your Python Scripts folder to PATH. On Windows this is typically:
 
 - `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` (user installs)
 
@@ -131,3 +131,4 @@ If `imageFetch` is not found, ensure your Python Scripts directory is on PATH. O
 - Data URLs are listed in the manifest but not saved as files.
 - Crawling is limited to the same domain when enabled.
 - After completion, a ZIP archive is created for the output folder (both CLI and GUI).
+
