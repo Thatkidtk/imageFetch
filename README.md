@@ -59,6 +59,12 @@ Then run the app:
 imageFetch
 ```
 
+Install a specific version (tag):
+
+```
+pipx install "git+https://github.com/Thatkidtk/imageFetch.git@v0.1.0"
+```
+
 Option B — pip (user install)
 
 ```
@@ -73,6 +79,17 @@ You can also run this helper from the repo to add it automatically:
 
 ```
 powershell -ExecutionPolicy Bypass -File scripts/add_imagefetch_to_path.ps1
+```
+
+## Releases
+
+- Download wheels or source archives from the Releases page:
+  - https://github.com/Thatkidtk/imageFetch/releases
+- Install a wheel directly (example):
+
+```
+python -m pip install --user \
+  https://github.com/Thatkidtk/imageFetch/releases/download/v0.1.0/image_scraper_app-0.1.0-py3-none-any.whl
 ```
 
 ## Install as a Command
