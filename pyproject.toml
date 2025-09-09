@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "image-scraper-app"
+version = "0.1.0"
+description = "CLI + GUI image scraper"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "requests",
+  "beautifulsoup4",
+]
+
+[project.scripts]
+imageFetch = "image_scraper_gui:run"
+imgFetch = "image_scraper_gui:run"
+imagefetch = "image_scraper_gui:run"
+
+[tool.setuptools]
+py-modules = ["image_scraper", "image_scraper_gui"]
