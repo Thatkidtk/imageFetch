@@ -138,3 +138,8 @@ If `imageFetch` is not found, ensure your Python Scripts directory is on PATH. O
 - Theme: System / Light / Dark
 - Accent: blue / green / dark-blue
 
+### New in the Modern UI
+- About dialog with link to the GitHub repo
+- Drag & drop a URL onto the window (requires tkinterdnd2, installed automatically)
+- Compact mode toggle for denser layout
+

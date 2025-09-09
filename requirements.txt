@@ -2,3 +2,6 @@
 beautifulsoup4
 
 customtkinter
+
+tkinterdnd2
+

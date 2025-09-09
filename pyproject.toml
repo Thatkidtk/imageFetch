@@ -12,6 +12,7 @@ dependencies = [
   "requests",
   "beautifulsoup4",
   "customtkinter",
+  "tkinterdnd2",
 ]
 
 [project.scripts]

@@ -16,6 +16,16 @@ except Exception:  # pragma: no cover - fallback to legacy GUI
     ctk = None
 
 from tkinter import messagebox  # used in fallback cases
+import webbrowser
+try:
+    import importlib.metadata as importlib_metadata
+except Exception:  # py<3.8
+    import importlib_metadata  # type: ignore
+try:
+    from tkinterdnd2 import TkinterDnD, DND_TEXT  # type: ignore
+    _DND_AVAILABLE = True
+except Exception:
+    _DND_AVAILABLE = False
 
 from image_scraper import (
     crawl_site,
@@ -56,6 +66,7 @@ class ModernImageScraperGUI:
         self.crawl_var = ctk.BooleanVar(value=False)
         self.max_pages_var = ctk.StringVar(value="20")
         self.open_when_done_var = ctk.BooleanVar(value=False)
+        self.compact_mode_var = ctk.BooleanVar(value=False)
 
         self.total = 0
         self.completed = 0
@@ -64,7 +75,18 @@ class ModernImageScraperGUI:
 
         self._build_ui()
         self._load_prefs()
+        # Apply compact mode after loading prefs
+        self._apply_compact_mode(self.compact_mode_var.get())
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+
+        # Optional: Drag-and-drop URL support
+        if _DND_AVAILABLE:
+            try:
+                # Register drop on the window; set URL on drop
+                self.root.drop_target_register(DND_TEXT)  # type: ignore[attr-defined]
+                self.root.dnd_bind("<<Drop>>", self._on_url_drop)  # type: ignore[attr-defined]
+            except Exception:
+                pass
 
     # Preferences
     def _config_dir(self) -> Path:
@@ -128,6 +150,12 @@ class ModernImageScraperGUI:
         # Theme controls
         right = ctk.CTkFrame(top, fg_color="transparent")
         right.pack(side="right")
+        # Compact mode toggle
+        self.compact_switch = ctk.CTkSwitch(right, text="Compact", variable=self.compact_mode_var, command=self._on_compact_toggle)
+        self.compact_switch.pack(side="right", padx=(8, 0))
+        # About button
+        self.about_btn = ctk.CTkButton(right, text="About", width=70, command=self._show_about)
+        self.about_btn.pack(side="right", padx=(8, 0))
         self.appearance_option = ctk.CTkOptionMenu(right, values=["System", "Light", "Dark"], command=self._on_theme_change)
         self.appearance_option.set("System")
         self.appearance_option.pack(side="right", padx=(8, 0))
@@ -199,6 +227,22 @@ class ModernImageScraperGUI:
         v = value or "blue"
         ctk.set_default_color_theme(v)
         self._save_prefs()
+
+    def _on_compact_toggle(self):
+        self._apply_compact_mode(self.compact_mode_var.get())
+        self._save_prefs()
+
+    def _apply_compact_mode(self, enable: bool):
+        # Use widget scaling to emulate compact density
+        try:
+            ctk.set_widget_scaling(0.9 if enable else 1.0)
+            # Adjust window size a bit
+            if enable:
+                self.root.minsize(640, 480)
+            else:
+                self.root.minsize(720, 520)
+        except Exception:
+            pass
 
     def _toggle_crawl(self):
         state = "normal" if self.crawl_var.get() else "disabled"
@@ -334,6 +378,47 @@ class ModernImageScraperGUI:
         self._save_prefs()
         self.root.destroy()
 
+    # Drag-and-drop handler
+    def _on_url_drop(self, event):
+        try:
+            data = getattr(event, 'data', '') or ''
+            data = data.strip()
+            # Clean potential curly braces or spaces from DnD
+            if data.startswith('{') and data.endswith('}'):
+                data = data[1:-1]
+            # Only accept http(s) URLs
+            candidate = data.splitlines()[0].strip()
+            if candidate.lower().startswith(('http://', 'https://')):
+                self.url_var.set(candidate)
+                self.log_line(f"Dropped URL: {candidate}")
+            else:
+                self.log_line("Drop ignored (not an http(s) URL)")
+        except Exception:
+            pass
+
+    # About dialog
+    def _show_about(self):
+        try:
+            try:
+                version = importlib_metadata.version('image-scraper-app')  # type: ignore
+            except Exception:
+                version = 'dev'
+            win = ctk.CTkToplevel(self.root)
+            win.title("About imageFetch")
+            win.geometry("420x240")
+            win.resizable(False, False)
+            frame = ctk.CTkFrame(win)
+            frame.pack(fill="both", expand=True, padx=16, pady=16)
+            ctk.CTkLabel(frame, text="imageFetch", font=ctk.CTkFont(size=22, weight='bold')).pack(anchor='w')
+            ctk.CTkLabel(frame, text=f"Version {version}").pack(anchor='w', pady=(2, 10))
+            ctk.CTkLabel(frame, text="A clean, modern image scraper for the web.").pack(anchor='w')
+            def open_repo():
+                webbrowser.open_new_tab("https://github.com/Thatkidtk/imageFetch")
+            ctk.CTkButton(frame, text="GitHub Repository", command=open_repo).pack(anchor='w', pady=(12, 0))
+            ctk.CTkButton(frame, text="Close", command=win.destroy).pack(anchor='e', pady=(18, 0))
+        except Exception as e:
+            messagebox.showinfo("About", f"imageFetch\n{e}")
+
 
 def run():
     if ctk is None:
@@ -347,4 +432,3 @@ def run():
             return
     app = ModernImageScraperGUI()
     app.root.mainloop()
-
