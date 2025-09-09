@@ -45,6 +45,36 @@ python image_scraper_gui.py
 
 When finished, the GUI enables buttons to open the output folder and the ZIP archive.
 
+## Install From GitHub (Recommended)
+
+Option A — pipx (isolated, recommended)
+
+```
+pipx install "git+https://github.com/Thatkidtk/imageFetch.git"
+```
+
+Then run the app:
+
+```
+imageFetch
+```
+
+Option B — pip (user install)
+
+```
+python -m pip install --user "git+https://github.com/Thatkidtk/imageFetch.git"
+```
+
+If the `imageFetch` command isn’t found after installation, add your Python Scripts folder to PATH. On Windows this is typically:
+
+- `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` (user installs)
+
+You can also run this helper from the repo to add it automatically:
+
+```
+powershell -ExecutionPolicy Bypass -File scripts/add_imagefetch_to_path.ps1
+```
+
 ## Install as a Command
 
 To run the GUI by typing `imageFetch` anywhere:
