@@ -4,7 +4,7 @@ Simple app (CLI + GUI) that asks for a URL, finds images on the page (and option
 
 ## Setup
 
-1. Ensure Python 3.9+ is installed.
+1. Ensure Python 3.10+ is installed.
 2. (Optional) Create and activate a virtual environment.
 3. Install dependencies:
 
@@ -74,6 +74,19 @@ python -m pip install --user "git+https://github.com/Thatkidtk/imageFetch.git"
 If the `imageFetch` command isn’t found after installation, add your Python Scripts folder to PATH. On Windows this is typically:
 
 - `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` (user installs)
+
+On macOS/Linux (user installs), ensure `$HOME/.local/bin` is on PATH:
+
+```
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+If `tkinter` is missing on Linux, install it via your package manager:
+
+```
+sudo apt-get install -y python3-tk   # Debian/Ubuntu
+```
 
 You can also run this helper from the repo to add it automatically:
 

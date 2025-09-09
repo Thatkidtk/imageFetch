@@ -6,6 +6,9 @@ from urllib.parse import urlparse
 
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import subprocess
+import platform
+import os
 
 from image_scraper import (
     crawl_site,
@@ -81,6 +84,17 @@ class ImageScraperGUI:
         self.open_zip_btn.grid(row=0, column=2, padx=6)
 
         self._toggle_crawl()
+
+    def _open_path(self, p: Path):
+        try:
+            if platform.system() == "Windows":
+                os.startfile(p)  # type: ignore[attr-defined]
+            elif platform.system() == "Darwin":
+                subprocess.run(["open", str(p)], check=False)
+            else:
+                subprocess.run(["xdg-open", str(p)], check=False)
+        except Exception:
+            messagebox.showinfo("Open", str(p))
 
     def choose_dir(self):
         d = filedialog.askdirectory()
@@ -205,20 +219,11 @@ class ImageScraperGUI:
 
     def open_folder(self):
         if self.out_dir_path and self.out_dir_path.exists():
-            try:
-                # Windows
-                import os
-                os.startfile(self.out_dir_path)  # type: ignore[attr-defined]
-            except Exception:
-                messagebox.showinfo("Open Folder", str(self.out_dir_path))
+            self._open_path(self.out_dir_path)
 
     def open_zip(self):
         if self.zip_path and self.zip_path.exists():
-            try:
-                import os
-                os.startfile(self.zip_path)  # type: ignore[attr-defined]
-            except Exception:
-                messagebox.showinfo("Open ZIP", str(self.zip_path))
+            self._open_path(self.zip_path)
 
 
 def run():

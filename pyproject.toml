@@ -7,7 +7,7 @@ name = "image-scraper-app"
 version = "0.1.0"
 description = "CLI + GUI image scraper"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
   "requests",
   "beautifulsoup4",
